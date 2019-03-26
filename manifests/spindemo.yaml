@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: spindemo-dev
+  name: spindemo-{{ ENV }}
   namespace: default
 spec:
   strategy:
@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: spindemo-dev
+        app: spindemo-{{ ENV }}
     spec:
       containers:
       - name: spinapp
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spindemo-dev
+  name: spindemo-{{ ENV }}
   namespace: default
 spec:
   type: ClusterIP
@@ -31,4 +31,4 @@ spec:
       targetPort: 8000
       protocol: TCP
   selector:
-    app: spindemo-dev
+    app: spindemo-{{ ENV }}
