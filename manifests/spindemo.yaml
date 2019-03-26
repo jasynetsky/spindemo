@@ -1,16 +1,19 @@
----
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: spindemo-{{ ENV }}
+  name: spindemo-{{ .Values.environment }}
   namespace: default
 spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+        app: spindemo-{{ .Values.environment }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: spindemo-{{ ENV }}
+        app: spindemo-{{ .Values.environment }}
     spec:
       containers:
       - name: spinapp
@@ -18,11 +21,15 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: spindemo-{{ ENV }}
+  name: spindemo-{{ .Values.environment }}
   namespace: default
 spec:
   type: ClusterIP
@@ -31,4 +38,4 @@ spec:
       targetPort: 8000
       protocol: TCP
   selector:
-    app: spindemo-{{ ENV }}
+    app: spindemo-{{ .Values.environment }}
